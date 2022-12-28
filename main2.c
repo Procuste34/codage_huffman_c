@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include <math.h> 
-// ceil, floor : #include <math.h>
+#include <math.h>
 
 #include "include/traces.h" 
 #include "include/check.h" 
@@ -27,6 +26,17 @@
 
 #define MAXCARS 128
 
+#define MAX_STRING_LENGTH 500
+
+/*
+#define MAXCARS 128
+typedef struct {
+unsigned int nbElt;
+unsigned char tree[MAXCARS];
+int data[2*MAXCARS-1];
+} T_indirectHeap;
+*/
+
 typedef struct {
 	unsigned int nbElt;
 	unsigned char * tree; // todo : j'ai mis * au lieu d'un truc [MAXCARS] ... preconise dans le sujet
@@ -37,8 +47,8 @@ typedef struct {
 char *strrev(char * str);
 
 int comparer(int a, int b);
-T_indirectHeap * newHeapV3(unsigned int nbMaxElt);
-void buildHeapV3(T_indirectHeap * p);
+T_indirectHeap * newHeapV3();
+void buildHeapV3(T_indirectHeap *p);
 void siftDownV3(T_indirectHeap *p, int k);
 void swapV3(T_indirectHeap *p, int i, int j);
 void showHeapV3(T_indirectHeap *p);
@@ -46,14 +56,18 @@ void showHeap_recV3(T_indirectHeap *p, int root, int indent);
 unsigned char removeMaxV3(T_indirectHeap *p);
 void siftUpV3(T_indirectHeap *p, int k);
 
-void genere_minimier_viz(unsigned char *tree, int nbElt, char * nom_fichier);
-void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char * nom_fichier);
+void genere_minimier_viz(unsigned char *tree, int nbElt, char *nom_fichier);
+void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char *nom_fichier);
 
-void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier);
-void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier);
+void genere_arbre_codage_viz(int *tree, int root, char *nom_fichier);
+void genere_arbre_codage_viz_rec(int *tree, int root, char *nom_fichier);
+
+void genere_fichier_viz(T_indirectHeap *p, int *tree, int top_noeud_tree, int etape);
 
 //todo : foutre les fichiers generer dans un ss-dossier...
 //revoir les todo
+//mettre des gros commentaires, pq pas pointer vers une fiche explicative qui rentre vraiment en details
+//passer en minimimier
 
 int main(void){
 	printf("******************************************\n");
@@ -61,29 +75,22 @@ int main(void){
     //char ma_string[] = "ABBACADABRA";
     //char ma_string[] = "algorithme de huffman pour la compression de chaines";
 
-    char str[500]; //todo : CS
+    char str[MAX_STRING_LENGTH];
     char *ma_string;
     printf("Veuillez tapper un texte :");
-    fgets(str, 500, stdin);
+    fgets(str, MAX_STRING_LENGTH, stdin);
     ma_string = strtok(str, "\n");
 
-    T_indirectHeap * ih = newHeapV3(5*MAXCARS); //todo, arbitraire
+    T_indirectHeap * ih = newHeapV3();
+    
+    for (int i = 0; i < MAXCARS; i++) ih->tree[i] = 0;
+    for (int i = 0; i < 2*MAXCARS-1; i++) ih->data[i] = 0;
+
     int compteur_char_uniques = 0;
-
-    for (int i = 0; i < MAXCARS; i++)
-	{
-		ih->tree[i] = 0;
-	}
-
-    for (int i = 0; i < 2*MAXCARS-1; i++)
-	{
-		ih->data[i] = 0;
-	}
-
     for(int i = 0; i < strlen(ma_string); i++){
-        ih->data[(int)ma_string[i]]--;
+        ih->data[(int) ma_string[i]]--; //maximier truqué en minimier...
 
-        if(ih->data[(int)ma_string[i]] == -1){
+        if(ih->data[(int) ma_string[i]] == -1){
             ih->tree[compteur_char_uniques] = ma_string[i];
             compteur_char_uniques++;
         }
@@ -92,103 +99,52 @@ int main(void){
     int nb_char_uniques = compteur_char_uniques;
     ih->nbElt = nb_char_uniques;
 
-	buildHeapV3(ih); // fait un maximier mais en prenant compte des occ. et non du code ASCII!!! donc c parfait
-    //for(int i = 0; i<ih->nbElt; i++){
-    //    printf("%d\n", ih->tree[i]);
-    //}
-    //showHeapV3(ih);
+	buildHeapV3(ih);
 
     int huffmanTree [2*MAXCARS-1];
     for(int i = 0; i < 2*MAXCARS-1; i++){
         huffmanTree[i] = -256;
     }
 
-    //TODO : tout mettre dans une fonction ou on donne juste le X (mais a mettre avec l'arbre de codage)
-    //minimier
-    char source_fn[50] = "minimier_etape_0.dot";
-    char output_fn[50] = "minimier_etape_0.png";
-
-    genere_minimier_viz(ih->tree, ih->nbElt, source_fn);
-
-    char cmd[100];
-    sprintf(cmd, "dot %s -T png -o %s", source_fn, output_fn);
-    system(cmd);
-
-    //arbre de codage
-    char source_fn2[50] = "arbre_codage_etape_0.dot";
-    char output_fn2[50] = "arbre_codage_etape_0.png";
-
-    genere_arbre_codage_viz(huffmanTree, 0, source_fn2);
-
-    char cmd2[100];
-    sprintf(cmd2, "dot %s -T png -o %s", source_fn2, output_fn2);
-    system(cmd2);
+    genere_fichier_viz(ih, huffmanTree, 0, 0);
 
     for(int i = 0; i < nb_char_uniques-1; i++){
         //1ere extraction
         unsigned char elt1 = removeMaxV3(ih);
-        //showHeapV3(ih);
-
-        //printf("retire :%d\n", elt1);
         int occ_elt1 = ih->data[elt1];
 
         //2eme extraction
         unsigned char elt2 = removeMaxV3(ih);
-        //showHeapV3(ih);
-
-        //printf("retire : %d\n", elt2);
         int occ_elt2 = ih->data[elt2];
 
-        //insertion de 128 et d'occurence occ_elt1+occ_elt2
-        //donc ce qu'il faut faire : mettre à jour data : data[128] + occ_elt1+occ_elt2
-        //                           inserer 128 dans le tas (on sait pas comment faire)
+        int n = 128+i;
+        //mettre à jour data[n] à occ_elt1+occ_elt2
+        ih->data[n] = occ_elt1+occ_elt2;
 
-        ih->data[128+i] = occ_elt1+occ_elt2;
-        ih->tree[ih->nbElt] = 128+i;
+        //inserer n dans le tas
+        ih->tree[ih->nbElt] = n;
         ih->nbElt++;
+
+        //on reconstruit le tas pour avoir un maximier
         buildHeapV3(ih);
-        //showHeapV3(ih);
 
-        //huffman tree / arbre de codage : comment l'implémenter ? tableau de 255 cases
-        huffmanTree[elt1] = -(128+i);
-        huffmanTree[elt2] = +(128+i); //todo : variabler ce 128+i
+        huffmanTree[elt1] = -n;
+        huffmanTree[elt2] = n;
 
-        //TODO : tout mettre dans une fonction ou on donne juste le X (mais a mettre avec l'arbre de codage)
-        //minimier
-        char source_fn[50] = "";
-        char output_fn[50] = "";
-
-        sprintf(source_fn, "minimier_etape_%d.dot", i+1);
-        sprintf(output_fn, "minimier_etape_%d.png", i+1);
-
-        genere_minimier_viz(ih->tree, ih->nbElt, source_fn);
-
-        char cmd[100];
-        sprintf(cmd, "dot %s -T png -o %s", source_fn, output_fn);
-        system(cmd);
-
-        //arbre de codage
-        char source_fn2[50] = "";
-        char output_fn2[50] = "";
-
-        sprintf(source_fn2, "arbre_codage_etape_%d.dot", i+1);
-        sprintf(output_fn2, "arbre_codage_etape_%d.png", i+1);
-
-        genere_arbre_codage_viz(huffmanTree, 128+i, source_fn2);
-
-        char cmd2[100];
-        sprintf(cmd2, "dot %s -T png -o %s", source_fn2, output_fn2);
-        system(cmd2);
+        genere_fichier_viz(ih, huffmanTree, n, i+1);
     }
 
-    int occurences[127];
-    int longueurs[127];
-    char codes[127][10]; // todo : 10 : longueur max du code d'un char... a voir
+    //l'arbre de codage est construit
+    //on va alors le parcourir pour en déduire le code de chacun des caractères de la chaine
+
+    int occurences[MAXCARS];
+    int longueurs[MAXCARS];
+    char codes[MAXCARS][nb_char_uniques]; // todo : 10 = longueur max du code d'un char... a voir
 
     char c0 = '0';
     char c1 = '1';
     
-    //calcul du code des chars.
+    //calcul du code de chacun des caractères ayant une occ > 0
     for(int i = 0; i <= 127; i++){
         if(huffmanTree[i] != -256){
             char code_car[10] = ""; // todo : 10 : longueur max du code d'un char... a voir
@@ -268,12 +224,12 @@ int comparer(int a, int b){
 	return a-b;
 }
 
-T_indirectHeap * newHeapV3(unsigned int nbMaxElt){
+T_indirectHeap * newHeapV3(){
 	T_indirectHeap * pAux;
 
 	CHECK_IF(pAux = malloc(sizeof(T_indirectHeap)), NULL, "erreur malloc");
-	CHECK_IF(pAux->tree = malloc(nbMaxElt * sizeof(unsigned char)), NULL, "erreur malloc");
-	CHECK_IF(pAux->data = malloc(nbMaxElt * sizeof(int)), NULL, "erreur malloc");
+	CHECK_IF(pAux->tree = malloc(MAXCARS * sizeof(unsigned char)), NULL, "erreur malloc");
+	CHECK_IF(pAux->data = malloc((2*MAXCARS-1) * sizeof(int)), NULL, "erreur malloc");
 
 	pAux->nbElt = 0;
 	
@@ -420,7 +376,7 @@ void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier){
 }
 
 void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
-    //on cherche les 2 fils de root puis lancer l'appel rec.
+    //on cherche les 2 fils de root puis on lance l'appel rec.
 
     char label[4];
     if(root <= 127){
@@ -471,4 +427,32 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
 
         fclose(fp);
     }
+}
+
+void genere_fichier_viz(T_indirectHeap *p, int *tree, int top_noeud_tree, int etape){
+    //minimier
+    char source_fn[100] = ""; //todo : a voir
+    char output_fn[100] = "";
+
+    sprintf(source_fn, "fichiers_viz/minimier_etape_%d.dot", etape);
+    sprintf(output_fn, "fichiers_viz/minimier_etape_%d.png", etape);
+
+    genere_minimier_viz(p->tree, p->nbElt, source_fn);
+
+    char cmd[100]; //todo : a voir
+    sprintf(cmd, "dot %s -T png -o %s", source_fn, output_fn);
+    system(cmd);
+
+    //arbre de codage
+    char source_fn2[100] = "";
+    char output_fn2[100] = "";
+
+    sprintf(source_fn2, "fichiers_viz/arbre_codage_etape_%d.dot", etape);
+    sprintf(output_fn2, "fichiers_viz/arbre_codage_etape_%d.png", etape);
+
+    genere_arbre_codage_viz(tree, top_noeud_tree, source_fn2);
+
+    char cmd2[100];
+    sprintf(cmd2, "dot %s -T png -o %s", source_fn2, output_fn2);
+    system(cmd2);
 }

@@ -314,10 +314,3 @@ void siftUpV3(T_indirectHeap *p, int k) {
 		k = iPARENT(k); 
 	}
 }
-
-
-
-
-
-
-
