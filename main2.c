@@ -46,6 +46,12 @@ void showHeap_recV3(T_indirectHeap *p, int root, int indent);
 unsigned char removeMaxV3(T_indirectHeap *p);
 void siftUpV3(T_indirectHeap *p, int k);
 
+void genere_minimier_viz(unsigned char *tree, int nbElt, char * nom_fichier);
+void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char * nom_fichier);
+
+void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier);
+void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier);
+
 int main(void){
 	printf("******************************************\n");
 
@@ -84,12 +90,36 @@ int main(void){
     ih->nbElt = nb_char_uniques;
 
 	buildHeapV3(ih); // fait un maximier mais en prenant compte des occ. et non du code ASCII!!! donc c parfait
+    //for(int i = 0; i<ih->nbElt; i++){
+    //    printf("%d\n", ih->tree[i]);
+    //}
     //showHeapV3(ih);
 
     int huffmanTree [2*MAXCARS-1];
     for(int i = 0; i < 2*MAXCARS-1; i++){
         huffmanTree[i] = -256;
     }
+
+    //TODO : tout mettre dans une fonction ou on donne juste le X (mais a mettre avec l'arbre de codage)
+    //minimier
+    char source_fn[50] = "minimier_etape_0.dot";
+    char output_fn[50] = "minimier_etape_0.png";
+
+    genere_minimier_viz(ih->tree, ih->nbElt, source_fn);
+
+    char cmd[100];
+    sprintf(cmd, "dot %s -T png -o %s", source_fn, output_fn);
+    system(cmd);
+
+    //arbre de codage
+    char source_fn2[50] = "arbre_codage_etape_0.dot";
+    char output_fn2[50] = "arbre_codage_etape_0.png";
+
+    genere_arbre_codage_viz(huffmanTree, 0, source_fn2);
+
+    char cmd2[100];
+    sprintf(cmd2, "dot %s -T png -o %s", source_fn2, output_fn2);
+    system(cmd2);
 
     for(int i = 0; i < nb_char_uniques-1; i++){
         //1ere extraction
@@ -119,6 +149,19 @@ int main(void){
         //huffman tree / arbre de codage : comment l'implémenter ? tableau de 255 cases
         huffmanTree[elt1] = -(128+i);
         huffmanTree[elt2] = +(128+i); //todo : variabler ce 128+i
+
+        //TODO : tout mettre dans une fonction ou on donne juste le X (mais a mettre avec l'arbre de codage)
+        char source_fn[50] = "";
+        char output_fn[50] = "";
+
+        sprintf(source_fn, "minimier_etape_%d.dot", i+1);
+        sprintf(output_fn, "minimier_etape_%d.png", i+1);
+
+        genere_minimier_viz(ih->tree, ih->nbElt, source_fn);
+
+        char cmd[100];
+        sprintf(cmd, "dot %s -T png -o %s", source_fn, output_fn);
+        system(cmd);
     }
 
     int occurences[127];
@@ -295,4 +338,116 @@ void siftUpV3(T_indirectHeap *p, int k) {
 		swapV3(p,k,iPARENT(k)); 
 		k = iPARENT(k); 
 	}
+}
+
+void genere_minimier_viz(unsigned char *tree, int nbElt, char * nom_fichier){
+    FILE *fp = fopen(nom_fichier, "w");
+
+    fputs("digraph POT_test {\n", fp);
+    fputs("node [fontname=\"Arial\", shape=\"circle\", width=0.5];\n", fp);
+    fclose(fp);
+
+    genere_minimier_viz_rec(tree, nbElt, 0, nom_fichier);
+
+    fp = fopen(nom_fichier, "a");
+    fputs("}\n", fp);
+    fclose(fp);
+}
+
+void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char * nom_fichier){
+    assert(tree!=NULL); //todo : remove
+	if (!isINTREE(root, nbElt)) return;
+
+    char label[4];
+    if(tree[root] <= 127){
+        sprintf(label, "%c", tree[root]);
+    }else{
+        sprintf(label, "%d", tree[root]);
+    }
+
+    FILE *fp = fopen(nom_fichier, "a");
+	
+    char str[100];
+    sprintf(str, "%d [label = \"%s\"]\n", tree[root], label);
+    fputs(str, fp);
+
+    if(isINTREE(iLCHILD(root), nbElt)){
+        char str2[100];
+        sprintf(str2, "%d:sw -> %d\n", tree[root], tree[iLCHILD(root)]);
+        fputs(str2, fp);
+    }
+    if(isINTREE(iRCHILD(root), nbElt)){
+        char str3[100];
+        sprintf(str3, "%d:se -> %d\n", tree[root], tree[iRCHILD(root)]);
+        fputs(str3, fp);
+    }
+
+    fclose(fp);
+
+	genere_minimier_viz_rec(tree, nbElt, iLCHILD(root), nom_fichier);
+	genere_minimier_viz_rec(tree, nbElt, iRCHILD(root), nom_fichier);
+}
+
+void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier){
+    FILE *fp = fopen(nom_fichier, "w");
+
+    fputs("digraph POT_test {\n", fp);
+    fputs("node [fontname=\"Arial\", shape=\"circle\", width=0.5];\n", fp);
+    fclose(fp);
+
+    genere_arbre_codage_viz_rec(tree, root, nom_fichier);
+
+    fp = fopen(nom_fichier, "a");
+    fputs("}\n", fp);
+    fclose(fp);
+}
+
+void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
+    //on cherche les 2 fils de root puis lancer l'appel rec.
+
+    char label[4];
+    if(root <= 127){
+        sprintf(label, "%c", root);
+    }else{
+        sprintf(label, "%d", root);
+    }
+
+    FILE *fp = fopen(nom_fichier, "a");
+	
+    char str[100];
+    sprintf(str, "%d [label = \"%s\"]\n", root, label);
+    fputs(str, fp);
+
+    int fils_gauche = -256;
+    int fils_droite = -256;
+
+    for(int i = 0; i<256; i++){
+        if(tree[i] == -root){
+            //on a trouvé le fils gauche
+            fils_gauche = i;
+
+        }
+        if(tree[i] == root){
+            //on a trouvé le fils droite
+            fils_droite = i;
+        }
+    }
+
+    if(fils_gauche != -256){
+        char str2[100];
+        sprintf(str2, "%d:sw -> %d [label = \" 0\"]\n", root, fils_gauche);
+        fputs(str2, fp);
+
+        if(fils_droite != -256){
+            char str3[100];
+            sprintf(str3, "%d:se -> %d [label = \" 1\"]\n", root, fils_droite);
+            fputs(str3, fp);
+        }
+
+        genere_arbre_codage_viz_rec(tree, fils_gauche, nom_fichier);
+
+        if(fils_droite != -256){
+            genere_arbre_codage_viz_rec(tree, fils_droite, nom_fichier);
+        }
+    }
 }
