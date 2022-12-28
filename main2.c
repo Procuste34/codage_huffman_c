@@ -151,6 +151,7 @@ int main(void){
         huffmanTree[elt2] = +(128+i); //todo : variabler ce 128+i
 
         //TODO : tout mettre dans une fonction ou on donne juste le X (mais a mettre avec l'arbre de codage)
+        //minimier
         char source_fn[50] = "";
         char output_fn[50] = "";
 
@@ -162,6 +163,19 @@ int main(void){
         char cmd[100];
         sprintf(cmd, "dot %s -T png -o %s", source_fn, output_fn);
         system(cmd);
+
+        //arbre de codage
+        char source_fn2[50] = "";
+        char output_fn2[50] = "";
+
+        sprintf(source_fn2, "arbre_codage_etape_%d.dot", i+1);
+        sprintf(output_fn2, "arbre_codage_etape_%d.png", i+1);
+
+        genere_arbre_codage_viz(huffmanTree, 128+i, source_fn2);
+
+        char cmd2[100];
+        sprintf(cmd2, "dot %s -T png -o %s", source_fn2, output_fn2);
+        system(cmd2);
     }
 
     int occurences[127];
@@ -417,6 +431,7 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
     char str[100];
     sprintf(str, "%d [label = \"%s\"]\n", root, label);
     fputs(str, fp);
+    fclose(fp);
 
     int fils_gauche = -256;
     int fils_droite = -256;
@@ -436,6 +451,7 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
     if(fils_gauche != -256){
         char str2[100];
         sprintf(str2, "%d:sw -> %d [label = \" 0\"]\n", root, fils_gauche);
+        fp = fopen(nom_fichier, "a");
         fputs(str2, fp);
 
         if(fils_droite != -256){
@@ -449,5 +465,7 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
         if(fils_droite != -256){
             genere_arbre_codage_viz_rec(tree, fils_droite, nom_fichier);
         }
+
+        fclose(fp);
     }
 }
