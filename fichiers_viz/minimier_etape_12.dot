@@ -1,0 +1,14 @@
+digraph POT_test {
+node [fontname="Arial", shape="circle", width=0.5];
+32 [label = " "]
+32:sw -> 135
+32:se -> 136
+135 [label = "135"]
+135:sw -> 137
+135:se -> 138
+137 [label = "137"]
+138 [label = "138"]
+136 [label = "136"]
+136:sw -> 139
+139 [label = "139"]
+}
