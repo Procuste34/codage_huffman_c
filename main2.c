@@ -50,7 +50,13 @@ int main(void){
 	printf("******************************************\n");
 
     //char ma_string[] = "ABBACADABRA";
-    char ma_string[] = "algorithme de huffman pour la compression de chaines";
+    //char ma_string[] = "algorithme de huffman pour la compression de chaines";
+
+    char str[500]; //todo : CS
+    char *ma_string;
+    printf("Veuillez tapper un texte :");
+    fgets(str, 500, stdin);
+    ma_string = strtok(str, "\n");
 
     T_indirectHeap * ih = newHeapV3(5*MAXCARS); //todo, arbitraire
     int compteur_char_uniques = 0;
@@ -78,7 +84,7 @@ int main(void){
     ih->nbElt = nb_char_uniques;
 
 	buildHeapV3(ih); // fait un maximier mais en prenant compte des occ. et non du code ASCII!!! donc c parfait
-    showHeapV3(ih);
+    //showHeapV3(ih);
 
     int huffmanTree [2*MAXCARS-1];
     for(int i = 0; i < 2*MAXCARS-1; i++){
@@ -88,16 +94,16 @@ int main(void){
     for(int i = 0; i < nb_char_uniques-1; i++){
         //1ere extraction
         unsigned char elt1 = removeMaxV3(ih);
-        showHeapV3(ih);
+        //showHeapV3(ih);
 
-        printf("retire :%d\n", elt1);
+        //printf("retire :%d\n", elt1);
         int occ_elt1 = ih->data[elt1];
 
         //2eme extraction
         unsigned char elt2 = removeMaxV3(ih);
-        showHeapV3(ih);
+        //showHeapV3(ih);
 
-        printf("retire : %d\n", elt2);
+        //printf("retire : %d\n", elt2);
         int occ_elt2 = ih->data[elt2];
 
         //insertion de 128 et d'occurence occ_elt1+occ_elt2
@@ -108,14 +114,12 @@ int main(void){
         ih->tree[ih->nbElt] = 128+i;
         ih->nbElt++;
         buildHeapV3(ih);
-        showHeapV3(ih);
+        //showHeapV3(ih);
 
         //huffman tree / arbre de codage : comment l'implémenter ? tableau de 255 cases
         huffmanTree[elt1] = -(128+i);
         huffmanTree[elt2] = +(128+i); //todo : variabler ce 128+i
     }
-
-    printf("*********************** huffmantree coding ***********************\n");
 
     int occurences[127];
     int longueurs[127];

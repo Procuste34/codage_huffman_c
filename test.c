@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char *argv[])
@@ -8,9 +9,14 @@ int main(int argc, char *argv[])
 
     printf("affichage : \n");
 
-    for(int i = 0; i < strlen(argv[1]); i++){
-        printf("%c\n", argv[1][i]);
+    /* you must add one to cover the byte needed for the terminating null character */
+    char *stringB = (char *) malloc(strlen(argv[1]) + 1); 
+    strcpy(stringB, argv[1]);
+
+    for(int i = 0; i < strlen(stringB); i++){
+        printf("%c\n", stringB[i]);
     }
+
 
 
     return 0;
