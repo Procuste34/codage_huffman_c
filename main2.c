@@ -34,6 +34,8 @@ typedef struct {
 } T_indirectHeap;
 
 
+char *strrev(char * str);
+
 int comparer(int a, int b);
 T_indirectHeap * newHeapV3(unsigned int nbMaxElt);
 void buildHeapV3(T_indirectHeap * p);
@@ -113,59 +115,57 @@ int main(void){
 
     printf("*********************** huffmantree coding ***********************\n");
 
-    printf("ntm\n");
-
-    //int occurences[127];
-    //int longueurs[127];
-    char * codes[127];
+    int occurences[127];
+    int longueurs[127];
+    char codes[127][10];
     
     //calcul du code d'un char
-    char * code_car = "";
-    //int compteur = 0; //on laisse le compteur parce que sinon ca compile pas merci C, pire language de programmation
-
-    printf("ntm\n");
+    char code_car[10] = "";
 
     char c0 = '0';
     char c1 = '1';
 
     int index = 68;
     while(huffmanTree[index] != -256){
-        //compteur++;
 
         if(huffmanTree[index] < 0){
-            //printf("0");
-            //char c = '0';
             strncat(code_car, &c0, 1);
         }else {
-            //printf("1");
-            //char c = '1';
             strncat(code_car, &c1, 1);
         }
 
         index = abs(huffmanTree[index]);    
     }
 
-    printf("ntm\n");
-
     //il faut retourner
-    printf("%s\n", code_car);
-
-    sprintf(code_car, strrev(code_car));
-
-
-    printf("%s\n", code_car);
-    printf("%d\n", strlen(code_car));
+    strrev(code_car); //todo : faire un truc plus simple ?
+    //printf("%s\n", code_car);
+    //printf("%lu\n", strlen(code_car));
     
-    //occurences[68] = ih->data[68];
-    //longueurs[68] = strlen(code_car);
-    strcpy(codes[65], "aaaaa");
-
-    printf("eeee");
+    occurences[68] = ih->data[68];
+    longueurs[68] = strlen(code_car);
+    strcpy(codes[68], code_car);
     
 
     
     return 0;
 
+}
+
+char *strrev(char * str){
+    char *p1, *p2;
+
+    if(! str || ! *str){
+        return str;
+    }
+
+    for(p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
+    {
+        *p1 ^= *p2;
+        *p2 ^= *p1;
+        *p1 ^= *p2;
+    }
+    return str;
 }
 
 int comparer(int a, int b){
