@@ -62,9 +62,9 @@ int main(void){
 	}
 
     for(int i = 0; i < 11; i++){
-        ih->data[ma_string[i]]--;
+        ih->data[(int)ma_string[i]]--;
 
-        if(ih->data[ma_string[i]] == -1){
+        if(ih->data[(int)ma_string[i]] == -1){
             ih->tree[compteur_char_uniques] = ma_string[i];
             compteur_char_uniques++;
         }
@@ -113,30 +113,43 @@ int main(void){
 
     printf("*********************** huffmantree coding ***********************\n");
 
+    printf("ntm\n");
+
     //int occurences[127];
     //int longueurs[127];
     char * codes[127];
     
     //calcul du code d'un char
-    char * code_car;
-    int compteur = 0; //on laisse le compteur parce que sinon ca compile pas merci C, pire language de programmation
+    char * code_car = "";
+    //int compteur = 0; //on laisse le compteur parce que sinon ca compile pas merci C, pire language de programmation
+
+    printf("ntm\n");
+
+    char c0 = '0';
+    char c1 = '1';
 
     int index = 68;
     while(huffmanTree[index] != -256){
-        compteur++;
+        //compteur++;
 
         if(huffmanTree[index] < 0){
-            char c = '0';
-            strncat(code_car, &c, 1);
+            //printf("0");
+            //char c = '0';
+            strncat(code_car, &c0, 1);
         }else {
-            char c = '1';
-            strncat(code_car, &c, 1);
+            //printf("1");
+            //char c = '1';
+            strncat(code_car, &c1, 1);
         }
 
         index = abs(huffmanTree[index]);    
     }
 
+    printf("ntm\n");
+
     //il faut retourner
+    printf("%s\n", code_car);
+
     sprintf(code_car, strrev(code_car));
 
 
@@ -146,6 +159,8 @@ int main(void){
     //occurences[68] = ih->data[68];
     //longueurs[68] = strlen(code_car);
     strcpy(codes[65], "aaaaa");
+
+    printf("eeee");
     
 
     
