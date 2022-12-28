@@ -52,6 +52,9 @@ void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char * no
 void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier);
 void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier);
 
+//todo : foutre les fichiers generer dans un ss-dossier...
+//revoir les todo
+
 int main(void){
 	printf("******************************************\n");
 
