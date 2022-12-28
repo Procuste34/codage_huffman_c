@@ -49,7 +49,9 @@ void siftUpV3(T_indirectHeap *p, int k);
 int main(void){
 	printf("******************************************\n");
 
-    char ma_string[11] = "ABBACADABRA";
+    //char ma_string[] = "ABBACADABRA";
+    char ma_string[] = "algorithme de huffman pour la compression de chaines";
+
     T_indirectHeap * ih = newHeapV3(5*MAXCARS); //todo, arbitraire
     int compteur_char_uniques = 0;
 
@@ -63,7 +65,7 @@ int main(void){
 		ih->data[i] = 0;
 	}
 
-    for(int i = 0; i < 11; i++){
+    for(int i = 0; i < strlen(ma_string); i++){
         ih->data[(int)ma_string[i]]--;
 
         if(ih->data[(int)ma_string[i]] == -1){
@@ -117,39 +119,69 @@ int main(void){
 
     int occurences[127];
     int longueurs[127];
-    char codes[127][10];
-    
-    //calcul du code d'un char
-    char code_car[10] = "";
+    char codes[127][10]; // todo : 10 : longueur max du code d'un char... a voir
 
     char c0 = '0';
     char c1 = '1';
+    
+    //calcul du code des chars.
+    for(int i = 0; i <= 127; i++){
+        if(huffmanTree[i] != -256){
+            char code_car[10] = ""; // todo : 10 : longueur max du code d'un char... a voir
 
-    int index = 68;
-    while(huffmanTree[index] != -256){
+            int index = i;
+            while(huffmanTree[index] != -256){
 
-        if(huffmanTree[index] < 0){
-            strncat(code_car, &c0, 1);
-        }else {
-            strncat(code_car, &c1, 1);
+                if(huffmanTree[index] < 0){
+                    strncat(code_car, &c0, 1);
+                }else {
+                    strncat(code_car, &c1, 1);
+                }
+
+                index = abs(huffmanTree[index]);    
+            }
+
+            strrev(code_car); //todo : faire un truc plus simple ?
+
+            occurences[i] = ih->data[i];
+            longueurs[i] = strlen(code_car);
+            strcpy(codes[i], code_car);
         }
-
-        index = abs(huffmanTree[index]);    
     }
 
-    //il faut retourner
-    strrev(code_car); //todo : faire un truc plus simple ?
-    //printf("%s\n", code_car);
-    //printf("%lu\n", strlen(code_car));
-    
-    occurences[68] = ih->data[68];
-    longueurs[68] = strlen(code_car);
-    strcpy(codes[68], code_car);
-    
+    //affichage du tableau des codes
+    printf("car : occ | long | bits\n");
+    printf("----+-----+------+---------\n");
 
+    for(int i = 0; i <= 127; i++){
+        if(huffmanTree[i] != -256){
+            printf("'%c' :   %d |    %d | %s\n", i, -occurences[i], longueurs[i], codes[i]);
+        }
+    }
+
+    //print le code de la string d'entrée ma_string (ABBACADABRA)
+
+    int len_code_huffman = 0;
+    for(int i = 0; i <= strlen(ma_string)-1; i++){
+        printf("%s", codes[(int)ma_string[i]]);
+
+        len_code_huffman += longueurs[(int)ma_string[i]];
+    }
+    printf("\n");
+
+    //print la conclusion
+
+    //longueur du code binaire :
+    int len_code_binaire = strlen(ma_string) * 8;
+
+    //ratio de compression : longueur du code de huffman / longueur du code binaire
+    float ratio_compression = 100 * (float) len_code_huffman / (float) len_code_binaire;
+
+    printf("Longueur du code binaire : %d\n", len_code_binaire);
+    printf("Longueur du code de huffman : %d\n", len_code_huffman);
+    printf("Ratio de compression : %.2f%%\n", ratio_compression);
     
     return 0;
-
 }
 
 char *strrev(char * str){
