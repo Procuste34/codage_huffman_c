@@ -17,13 +17,46 @@ T_entete * parcours_rec(int *tree, int root, T_entete *entete);
 int main(int argc, char *argv[]){
     printf("yo\n");
 
+    int compressage = 0;
+
     if(argc==2){
         printf("décompressage\n");
         printf("fichier à décompresser : %s\n", argv[1]);
     }else{
+        compressage = 1;
         printf("compressage\n");
         printf("fichier à compresser : %s\n", argv[1]);
         printf("fichier target : %s\n", argv[2]);
+    }
+
+    if(compressage){
+        FILE *fp = fopen("a_compresser", "r");
+
+        fseek(fp, 0, SEEK_END); //on se déplace à la fin du fichier pour en connaitre sa taille
+        long size = ftell(fp); //on recupere la taille du fichier
+        char *str = malloc(size + 1); //todo : checkif
+
+        fseek(fp, 0, SEEK_SET); //on revient en début de fichier
+
+        fread(str, 1, size, fp); //on lit le fichier en entier
+        
+        str[size] = '\0';
+
+        fclose(fp);
+
+        //////
+
+        printf("%s\n", str);
+
+        //todo : free(str);
+
+
+
+
+
+
+
+
     }
 
     return 0;

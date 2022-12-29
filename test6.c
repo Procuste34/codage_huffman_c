@@ -3,7 +3,9 @@
 #include <string.h>
 
 #include "include/traces.h" 
-#include "include/check.h" 
+#include "include/check.h"
+
+//generer entete à partir de huffmanTree
 
 typedef struct{
     char *parcours_prefixe; //todo : arbitraire
