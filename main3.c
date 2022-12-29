@@ -61,18 +61,11 @@ void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appe
 int main(int argc, char *argv[]){
     int compressage = 0;
 
-    if(argc==2){
-        printf("décompressage\n");
-        //printf("fichier à décompresser : %s\n", argv[1]);
-    }
     if(argc==3){
         compressage = 1;
-        printf("compressage\n");
-        //printf("fichier à compresser : %s\n", argv[1]);
-        //printf("fichier target : %s\n", argv[2]);
     }
     if(argc != 2 && argc != 3){
-        printf("erreur\n");
+        printf("erreur : mauvais nombre d'arguments passés!\n");
         return 0.;
     }
 
@@ -83,7 +76,8 @@ int main(int argc, char *argv[]){
 
         fseek(fp, 0, SEEK_END); //on se déplace à la fin du fichier pour en connaitre sa taille
         long size = ftell(fp); //on recupere la taille du fichier
-        char *str = malloc(size + 1); //todo : checkif
+        char *str;
+        CHECK_IF(str = malloc(size + 1), NULL, "erreur malloc");
 
         fseek(fp, 0, SEEK_SET); //on revient en début de fichier
 
@@ -92,8 +86,6 @@ int main(int argc, char *argv[]){
         str[size] = '\0';
 
         fclose(fp);
-
-        ////// go :
 
         T_indirectHeap * ih = newHeap();
     
@@ -211,7 +203,8 @@ int main(int argc, char *argv[]){
 
         fseek(fp, 0, SEEK_END); //on se déplace à la fin du fichier pour en connaitre sa taille
         long size = ftell(fp); //on recupere la taille du fichier
-        char *str = malloc(size + 1); //todo : checkif
+        char *str;
+        CHECK_IF(str = malloc(size + 1), NULL, "erreur malloc");
 
         fseek(fp, 0, SEEK_SET); //on revient en début de fichier
 
@@ -249,25 +242,13 @@ int main(int argc, char *argv[]){
             c = str[i];   
         }
 
-        //printf("VOICI MON PARCOURS PREFIXE : %s\n", entete->parcours_prefixe);
-        //printf("VOICI MON CARACTERES : %s\n", entete->caracteres);
-
         //on a l'entete, on peut donc en déduire huffmanTree
         int huffmanTree[256];
         for(int i = 0; i < 256; i++){
             huffmanTree[i] = -256;
         }
 
-        //ici
         parcours2(huffmanTree, entete->parcours_prefixe, entete->caracteres);
-
-        //printf("****** HUFFMAN TREE ****\n");
-        //for(int i = 0; i < 256; i++){
-        //    if(huffmanTree[i] != -256){
-        //        printf("%d : %d\n", i, huffmanTree[i]);
-        //    }
-        //}
-        //printf("*********************\n");
 
         char codes[MAXCARS][MAXCARS]; //stocke le code de chaque car.
         //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
@@ -502,11 +483,9 @@ void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appe
         int pere = *j;
         (*j)++;
 
-        //tree[*j] = -pere;
         parcours2_rec(tree, parcours_prefixe, caracteres, 1, j, i, compteur_car, pere);
 
         //appel rec. à droite
-        //tree[*j] = +pere;
         parcours2_rec(tree, parcours_prefixe, caracteres, 0, j, i, compteur_car, pere);
 
     }else{ //feuille
