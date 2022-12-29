@@ -27,14 +27,18 @@
 #define VALP_ih(pHeap, i)		pHeap->data[pHeap->tree[i]]		
 #define VAL_ih(heap, i)			heap.data[heap.tree[i]]	
 
+//todo attention aux define il y en a peut etre trop, ou alors en renommer
+
+void reverse_string(char* str);
+int comparer(int a, int b);
+
+// ****************** type et fonctions de manipulation de tas (indirect) ******************** //
+
 typedef struct {
 	unsigned int nbElt;
 	unsigned char * tree;
 	int * data;
 } T_indirectHeap;
-
-void reverse_string(char* str);
-int comparer(int a, int b);
 
 T_indirectHeap * newHeap();
 void buildHeap(T_indirectHeap *p);
@@ -45,6 +49,8 @@ void showHeap(T_indirectHeap *p);
 void showHeap_rec(T_indirectHeap *p, int root, int indent);
 unsigned char removeMax(T_indirectHeap *p);
 
+// ****************** fonctions pour générer les fichiers de visualisation ***************** //
+
 void genere_minimier_viz(unsigned char *tree, int nbElt, char *nom_fichier);
 void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char *nom_fichier);
 
@@ -53,44 +59,39 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char *nom_fichier);
 
 void genere_fichier_viz(T_indirectHeap *p, int *tree, int top_noeud_tree, int etape);
 
-//TODO:passer en minimier
+///////////////////////////////////
 
-int main(void){
-    char str[MAX_STRING_LENGTH];
-    char *ma_string;
-    
-    printf("Veuillez tapper un texte :");
-    fgets(str, MAX_STRING_LENGTH, stdin); //on écoute l'entrée standard
-    ma_string = strtok(str, "\n");
-    //si jamais le texte est tappé dans le terminal, le caractère \n est ajouté on doit donc l'enlever
-
+T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
+    //création du tas indirect
     T_indirectHeap * ih = newHeap();
-    
+
     //initialisation de tree (le tas) et de data (occurences)
     for (int i = 0; i < MAXCARS; i++) ih->tree[i] = 0;
     for (int i = 0; i < 2*MAXCARS-1; i++) ih->data[i] = 0;
 
     //comptage des occurences
     int compteur_char_uniques = 0;
-    for(int i = 0; i < strlen(ma_string); i++){
-        ih->data[(int) ma_string[i]]--; //maximier truqué en minimier...
+    for(int i = 0; i < strlen(str); i++){
+        ih->data[(int) str[i]]--; //maximier truqué en minimier...
 
         //ajout des caractères uniques au tas
-        if(ih->data[(int) ma_string[i]] == -1){
-            ih->tree[compteur_char_uniques] = ma_string[i];
+        if(ih->data[(int) str[i]] == -1){
+            ih->tree[compteur_char_uniques] = str[i];
             compteur_char_uniques++;
         }
     }
-	
-    int nb_car_uniques = compteur_char_uniques;
-    ih->nbElt = nb_car_uniques;
+
+    *nb_car_uniques = compteur_char_uniques;
+    ih->nbElt = *nb_car_uniques;
 
     //construction du minimier à partir du tas
     //c'est un minimier indirect : les noeuds sont bien les caractères mais ils sont triés selon leur occurences
 	buildHeap(ih);
 
-    //création de l'arbre de codage
-    int huffmanTree [2*MAXCARS-1];
+    return ih;
+}
+
+void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
     for(int i = 0; i < 2*MAXCARS-1; i++) huffmanTree[i] = -256;
 
     //première visualisation (etape 0)
@@ -123,15 +124,9 @@ int main(void){
         //visualisation (post etape i+1)
         genere_fichier_viz(ih, huffmanTree, n, i+1);
     }
+}
 
-    //l'arbre de codage est alors construit
-    //on va alors le parcourir pour en déduire le code de chacun des caractères de la chaine
-
-    int occurences[MAXCARS]; //stocke les occurences de chaque car.
-    int longueurs[MAXCARS]; //stocke la longueur des code de chaque car.
-    char codes[MAXCARS][MAXCARS]; //stocke le code de chaque car.
-    //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
-
+void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *longueurs, char codes[][MAXCARS]){
     char c0 = '0';
     char c1 = '1';
     
@@ -161,6 +156,35 @@ int main(void){
             strcpy(codes[i], code_car);
         }
     }
+}
+
+int main(void){
+    char str[MAX_STRING_LENGTH];
+    char *ma_string;
+    
+    printf("Veuillez tapper un texte :");
+    fgets(str, MAX_STRING_LENGTH, stdin); //on écoute l'entrée standard
+    ma_string = strtok(str, "\n");
+    //si jamais le texte est tappé dans le terminal, le caractère \n est ajouté on doit donc l'enlever
+
+    int z = 0;
+    int *nb_car_uniques = &z;
+    T_indirectHeap *ih = creer_tas(ma_string, nb_car_uniques);
+
+    //création de l'arbre de codage
+    int huffmanTree [2*MAXCARS-1];
+
+    construit_arbre_codage(huffmanTree, ih, *nb_car_uniques);
+
+    //l'arbre de codage est alors construit
+    //on va alors le parcourir pour en déduire le code de chacun des caractères de la chaine
+
+    int occurences[MAXCARS]; //stocke les occurences de chaque car.
+    int longueurs[MAXCARS]; //stocke la longueur des code de chaque car.
+    char codes[MAXCARS][MAXCARS]; //stocke le code de chaque car.
+    //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
+
+    calculer_codes(huffmanTree, ih, occurences, longueurs, codes);
 
     //affichage du tableau des codes
     printf("car : occ | long | bits\n");
