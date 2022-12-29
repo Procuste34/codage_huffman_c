@@ -321,9 +321,6 @@ int main(int argc, char *argv[]){
         }
 
         printf("\n");
-
-
-
     }
 
     return 0;
@@ -486,16 +483,18 @@ void parcours2(int *tree, char *parcours_prefixe, char *caracteres){
     int *j = &j_base;
     int *i = &i_base;
     int *compteur_car = &compteur_car_base;
-    parcours_rec2(tree, parcours_prefixe, caracteres, 0, j, i, compteur_car, -1);
+    parcours2_rec(tree, parcours_prefixe, caracteres, 0, j, i, compteur_car, -1);
 }
 
 
-void parcours_rec2(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere){
+void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere){
     if(parcours_prefixe[*i] == '0'){ //noeud interne
-        if(appel_fg){
-            tree[*j] = -pere;
-        }else{
-            tree[*j] = +pere;
+        if(pere != -1){
+            if(appel_fg){
+                tree[*j] = -pere;
+            }else{
+                tree[*j] = +pere;
+            }
         }
 
         (*i)++;
@@ -504,11 +503,11 @@ void parcours_rec2(int *tree, char *parcours_prefixe, char *caracteres, int appe
         (*j)++;
 
         //tree[*j] = -pere;
-        parcours_rec2(tree, parcours_prefixe, caracteres, 1, j, i, compteur_car, pere);
+        parcours2_rec(tree, parcours_prefixe, caracteres, 1, j, i, compteur_car, pere);
 
         //appel rec. à droite
         //tree[*j] = +pere;
-        parcours_rec2(tree, parcours_prefixe, caracteres, 0, j, i, compteur_car, pere);
+        parcours2_rec(tree, parcours_prefixe, caracteres, 0, j, i, compteur_car, pere);
 
     }else{ //feuille
         (*i)++;
