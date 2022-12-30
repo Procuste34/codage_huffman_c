@@ -14,8 +14,6 @@ int main(int argc, char *argv[]){
     }
 
     if(compressage){
-        //todo : faire des checks d'erreur (comme openai) si jamais fichier pas ok...
-
         FILE *fp = fopen(argv[1], "r");
         if(fp == NULL){
             perror("Erreur lors de l'ouverture du fichier");
