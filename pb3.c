@@ -1,11 +1,11 @@
 #include "pb3.h"
 
-void reverse_string(char* str){
+void reverse_string(char *str){
     //on parcourt la string de gauche à droite et de droite à gauche en même temps, jusqu'à arriver au milieu
 
     int length = strlen(str);
     int i;
-    for (i = 0; i < length / 2; i++){
+    for (i = 0; i < length/2; i++){
         char temp = str[i];
         str[i] = str[length - i - 1];
         str[length - i - 1] = temp;
@@ -17,7 +17,7 @@ int comparer(int a, int b){
 }
 
 T_indirectHeap * newHeap(){
-	T_indirectHeap * pAux;
+	T_indirectHeap *pAux;
 
 	CHECK_IF(pAux = malloc(sizeof(T_indirectHeap)), NULL, "erreur malloc");
 	CHECK_IF(pAux->tree = malloc(MAXCARS * sizeof(unsigned char)), NULL, "erreur malloc");
@@ -28,10 +28,10 @@ T_indirectHeap * newHeap(){
 	return pAux;
 }
 
-void buildHeap(T_indirectHeap * p){
+void buildHeap(T_indirectHeap *p){
 	int k;
 	int n;
-	assert(p!=NULL);
+	assert(p != NULL);
 	n = p->nbElt; 
 	for(k=iLASTINTERNAL(n); k>=0; k--) {
 		siftDown(p, k);
@@ -40,10 +40,10 @@ void buildHeap(T_indirectHeap * p){
 
 void siftDown(T_indirectHeap *p, int k){
 	int n; 
-	assert(p!=NULL);
+	assert(p != NULL);
 	n = p->nbElt; 
 	int i; 
-	if (!isINTREE(k,n)) return; 
+	if (!isINTREE(k,n)) return;
 	 
 	while ( ! isLEAF(k,n) ) {
 		if (isINTREE(iRCHILD(k),n) && (comparer(VALP_ih(p, iRCHILD(k)), VALP_ih(p, iLCHILD(k))) > 0)) i = iRCHILD(k); 
@@ -106,7 +106,7 @@ unsigned char removeMax(T_indirectHeap *p) {
 
 T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     //création du tas indirect
-    T_indirectHeap * ih = newHeap();
+    T_indirectHeap *ih = newHeap();
 
     //initialisation de tree (le tas) et de data (occurences)
     for (int i = 0; i < MAXCARS; i++) ih->tree[i] = 0;
@@ -144,7 +144,7 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
         unsigned char elt2 = removeMax(ih);
         int occ_elt2 = ih->data[elt2];
 
-        int n = 128+i;
+        int n = MAXCARS+i;
         //mettre à jour data[n] à occ_elt1+occ_elt2
         ih->data[n] = occ_elt1+occ_elt2;
 
@@ -195,19 +195,21 @@ T_entete * init_entete(){
     T_entete *entete;
 
     CHECK_IF(entete = malloc(sizeof(T_entete)), NULL, "erreur malloc");
-    CHECK_IF(entete->parcours_prefixe = malloc(100 * sizeof(char)), NULL, "erreur malloc");
-    CHECK_IF(entete->caracteres = malloc(100 * sizeof(char)), NULL, "erreur malloc");
+    CHECK_IF(entete->parcours_prefixe = malloc((2*MAXCARS-1) * sizeof(char)), NULL, "erreur malloc"); 
+    // MAXCARS + MAXCARS - 1 = taille max de la partie "parcours prefixe" de l'entete (il s'agit du nb. de noeud+feuilles dans l'arbre)
+
+    CHECK_IF(entete->caracteres = malloc(MAXCARS * sizeof(char)), NULL, "erreur malloc"); //MAXCARS = taille max de la partie "caracteres" de l'entete
 
     return entete;
 }
 
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete){
-    parcours_rec(huffmanTree, 128+nb_car_uniques-2, entete);
+    parcours_rec(huffmanTree, MAXCARS+nb_car_uniques-2, entete);
 }
 
 void parcours_rec(int *tree, int root, T_entete *entete){
     //traitement : si c'est une feuille on ajoute 1, et 0 sinon
-    if(root >= 128){
+    if(root >= MAXCARS){
         char c0 = '0';
         strncat(entete->parcours_prefixe, &c0, 1);
     }else{
@@ -246,12 +248,10 @@ void parcours_rec(int *tree, int root, T_entete *entete){
     if(fils_droit != -256){
         parcours_rec(tree, fils_droit, entete);
     }
-
-    //return entete;
 }
 
 void entete_to_huffmanTree(int *huffmanTree, T_entete *entete){
-    int j_base = 128;
+    int j_base = MAXCARS;
     int i_base = 0;
     int compteur_car_base = 0;
 

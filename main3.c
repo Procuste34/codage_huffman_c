@@ -2,8 +2,6 @@
 
 #include "pb3.h"
 
-//todo : renommer les fonctions (parcours_rec)
-
 int main(int argc, char *argv[]){
     int compressage = 0;
 
@@ -124,7 +122,10 @@ int main(int argc, char *argv[]){
         //on a le code de chaque car., on peut donc decoder le texte
         //pour cela, on parcourt le texte codé que l'on coupe en bout dès qu'on reconnait l'un des codes
         //on utilise donc une variable qui stocke le code en cours de lecture
-        char code_lu[100] = "";
+
+        char code_lu[MAXCARS] = "";
+        //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
+
         for(int j = i+1; j<size; j++){ //on reprend le parcours de str
             strncat(code_lu, &str[j], 1);
 
@@ -140,7 +141,6 @@ int main(int argc, char *argv[]){
                 }
             }
         }
-
         printf("\n");
     }
 

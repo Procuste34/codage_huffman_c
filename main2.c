@@ -3,7 +3,6 @@
 
 #include "pb2.h"
 
-//todo attention aux define il y en a peut etre trop, ou alors en renommer
 //todo refaire une couche de comms
 
 int main(void){
@@ -20,7 +19,9 @@ int main(void){
     T_indirectHeap *ih = creer_tas(ma_string, nb_car_uniques);
 
     //création de l'arbre de codage
-    int huffmanTree [2*MAXCARS-1];
+    int huffmanTree [2*MAXCARS];
+    for(int i = 0; i < 2*MAXCARS; i++) huffmanTree[i] = -256;
+
     construit_arbre_codage(huffmanTree, ih, *nb_car_uniques);
 
     //l'arbre de codage est alors construit

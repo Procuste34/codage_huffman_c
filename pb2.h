@@ -9,8 +9,6 @@
 #define MAXCARS 128
 #define MAX_STRING_LENGTH 500
 
-#define HEAP_ALLOCATION_OFFSET 5
-
 #define iPARENT(i) 			(i-1)/2
 #define iLCHILD(i) 			(2*i)+1
 #define iRCHILD(i) 			(2*i)+2
@@ -29,15 +27,15 @@
 
 // ****************** fonctions annexes ****************************************************** //
 
-void reverse_string(char* str);
+void reverse_string(char *str);
 int comparer(int a, int b);
 
 // ****************** type et fonctions de manipulation de tas (indirect) ******************** //
 
 typedef struct {
 	unsigned int nbElt;
-	unsigned char * tree;
-	int * data;
+	unsigned char *tree;
+	int *data;
 } T_indirectHeap;
 
 T_indirectHeap * newHeap();

@@ -6,9 +6,6 @@
 #include "include/check.h"
 
 #define MAXCARS 128
-#define MAX_STRING_LENGTH 500
-
-#define HEAP_ALLOCATION_OFFSET 5
 
 #define iPARENT(i) 			(i-1)/2
 #define iLCHILD(i) 			(2*i)+1
@@ -28,15 +25,15 @@
 
 // ****************** fonctions annexes ****************************************************** //
 
-void reverse_string(char* str);
+void reverse_string(char *str);
 int comparer(int a, int b);
 
 // ****************** type et fonctions de manipulation de tas (indirect) ******************** //
 
 typedef struct {
 	unsigned int nbElt;
-	unsigned char * tree;
-	int * data;
+	unsigned char *tree;
+	int *data;
 } T_indirectHeap;
 
 T_indirectHeap * newHeap();
@@ -66,5 +63,5 @@ T_entete * init_entete();
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete);
 void parcours_rec(int *tree, int root, T_entete *entete);
 
-void entete_to_huffmanTree(int *huffmanTree, T_entete *entete); //a completer
+void entete_to_huffmanTree(int *huffmanTree, T_entete *entete);
 void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere);

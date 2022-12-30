@@ -5,7 +5,7 @@ void reverse_string(char* str){
 
     int length = strlen(str);
     int i;
-    for (i = 0; i < length / 2; i++){
+    for (i = 0; i < length/2; i++){
         char temp = str[i];
         str[i] = str[length - i - 1];
         str[length - i - 1] = temp;
@@ -17,7 +17,7 @@ int comparer(int a, int b){
 }
 
 T_indirectHeap * newHeap(){
-	T_indirectHeap * pAux;
+	T_indirectHeap *pAux;
 
 	CHECK_IF(pAux = malloc(sizeof(T_indirectHeap)), NULL, "erreur malloc");
 	CHECK_IF(pAux->tree = malloc(MAXCARS * sizeof(unsigned char)), NULL, "erreur malloc");
@@ -28,7 +28,7 @@ T_indirectHeap * newHeap(){
 	return pAux;
 }
 
-void buildHeap(T_indirectHeap * p){
+void buildHeap(T_indirectHeap *p){
 	int k;
 	int n;
 	assert(p!=NULL);
@@ -58,7 +58,7 @@ void siftDown(T_indirectHeap *p, int k){
 
 void siftUp(T_indirectHeap *p, int k) {
 	assert(p!=NULL);
-	while ( !isROOT(k) && (comparer(VALP_ih(p, k),VALP_ih(p, iPARENT(k))) > 0 ) ) {
+	while (!isROOT(k) && (comparer(VALP_ih(p, k), VALP_ih(p, iPARENT(k))) > 0)) {
 		swap(p, k, iPARENT(k)); 
 		k = iPARENT(k); 
 	}
@@ -66,7 +66,7 @@ void siftUp(T_indirectHeap *p, int k) {
 
 void swap(T_indirectHeap *p, int i, int j) {
 	unsigned char aux; 
-	assert(p!=NULL);
+	assert(p != NULL);
 	aux = p->tree[i]; 
 	p->tree[i] = p->tree[j];
 	p->tree[j] = aux;
@@ -87,7 +87,7 @@ void showHeap_rec(T_indirectHeap *p, int root, int indent) {
 	if (! isINTREE(root,p->nbElt)) return;  
 	
 	showHeap_rec(p, iRCHILD(root), indent+1);
-	for(i=0;i<indent;i++) {
+	for(i = 0; i < indent; i++) {
 		printf("\t"); 
 	}
 	printf("%c(i:%d)\n", VALP(p, root), root);
@@ -104,7 +104,7 @@ unsigned char removeMax(T_indirectHeap *p) {
 	return aux;
 }
 
-void genere_minimier_viz(unsigned char *tree, int nbElt, char * nom_fichier){
+void genere_minimier_viz(unsigned char *tree, int nbElt, char *nom_fichier){
     //ouverture du fichier en w pour écraser tout le contenu
     FILE *fp = fopen(nom_fichier, "w");
 
@@ -122,13 +122,13 @@ void genere_minimier_viz(unsigned char *tree, int nbElt, char * nom_fichier){
     fclose(fp);
 }
 
-void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char * nom_fichier){
+void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char *nom_fichier){
     assert(tree!=NULL);
 	if (!isINTREE(root, nbElt)) return;
 
     //si le car. est affichable en tant que %c, on l'affiche ainsi, sinon on affiche son code ASCII
     char label[4];
-    if(tree[root] <= 127){
+    if(tree[root] <= MAXCARS-1){
         sprintf(label, "%c", tree[root]);
     }else{
         sprintf(label, "%d", tree[root]);
@@ -162,7 +162,7 @@ void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char * no
 	genere_minimier_viz_rec(tree, nbElt, iRCHILD(root), nom_fichier);
 }
 
-void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier){
+void genere_arbre_codage_viz(int *tree, int root, char *nom_fichier){
     FILE *fp = fopen(nom_fichier, "w");
 
     //formatage
@@ -177,12 +177,12 @@ void genere_arbre_codage_viz(int *tree, int root, char * nom_fichier){
     fclose(fp);
 }
 
-void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
+void genere_arbre_codage_viz_rec(int *tree, int root, char *nom_fichier){
     //on cherche les 2 fils de root puis on lance l'appel rec.
 
     //si le car. est affichable en tant que %c, on l'affiche ainsi, sinon on affiche son code ASCII
     char label[4];
-    if(root <= 127){
+    if(root <= MAXCARS-1){
         sprintf(label, "%c", root);
     }else{
         sprintf(label, "%d", root);
@@ -203,7 +203,7 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char * nom_fichier){
     int fils_gauche = -256;
     int fils_droit = -256;
 
-    for(int i = 0; i<256; i++){
+    for(int i = 0; i < 2*MAXCARS; i++){
         if(tree[i] == -root){
             //on a trouvé le fils gauche
             fils_gauche = i;
@@ -242,7 +242,7 @@ void genere_fichier_viz(T_indirectHeap *p, int *tree, int top_noeud_tree, int et
     //en plus de générer les fichiers dot, elle génère les fichiers png associés
 
     //minimier
-    char source_fn[50] = ""; //taille max attendue du nom du fichier
+    char source_fn[50] = ""; //taille max attendue du nom du fichier (cf en dessous)
     char output_fn[50] = "";
 
     sprintf(source_fn, "fichiers_viz/minimier_etape_%d.dot", etape);
@@ -299,8 +299,6 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
 }
 
 void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
-    for(int i = 0; i < 2*MAXCARS-1; i++) huffmanTree[i] = -256;
-
     //première visualisation (etape 0)
     genere_fichier_viz(ih, huffmanTree, 0, 0);
 
@@ -313,7 +311,7 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
         unsigned char elt2 = removeMax(ih);
         int occ_elt2 = ih->data[elt2];
 
-        int n = 128+i;
+        int n = MAXCARS+i;
         //mettre à jour data[n] à occ_elt1+occ_elt2
         ih->data[n] = occ_elt1+occ_elt2;
 
@@ -340,7 +338,7 @@ void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *
     //calcul du code de chacun des caractères ayant une occ > 0
     //pour chaque car., on remonte l'arbre tant qu'on rencontre un noeud (différent de -256)
     //il faudra enfin renverse la string obtenue pour avoir le code du car.
-    for(int i = 0; i <= 127; i++){
+    for(int i = 0; i <= MAXCARS-1; i++){
         if(huffmanTree[i] != -256){
             char code_car[MAXCARS] = ""; //MAXCARS = longueur max d'un code
 
