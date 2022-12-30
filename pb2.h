@@ -45,7 +45,7 @@ void siftUp(T_indirectHeap *p, int k);
 void swap(T_indirectHeap *p, int i, int j);
 void showHeap(T_indirectHeap *p);
 void showHeap_rec(T_indirectHeap *p, int root, int indent);
-unsigned char removeMax(T_indirectHeap *p);
+unsigned char removeMin(T_indirectHeap *p);
 
 // ****************** fonctions pour générer les fichiers de visualisation ***************** //
 

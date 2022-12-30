@@ -13,7 +13,7 @@ void reverse_string(char *str){
 }
 
 int comparer(int a, int b){
-	return a-b;
+	return b-a; //pour avoir un minimier
 }
 
 T_indirectHeap * newHeap(){
@@ -94,7 +94,7 @@ void showHeap_rec(T_indirectHeap *p, int root, int indent) {
 	showHeap_rec(p, iLCHILD(root), indent+1);
 }
 
-unsigned char removeMax(T_indirectHeap *p) {
+unsigned char removeMin(T_indirectHeap *p) {
 	unsigned char aux;
 	assert(p!=NULL);
 	aux = p->tree[0];
@@ -119,10 +119,10 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     //comptage des occurences
     int compteur_char_uniques = 0;
     for(int i = 0; i < strlen(str); i++){
-        ih->data[(int) str[i]]--; //maximier truqué en minimier...
+        ih->data[(int) str[i]]++;
 
         //ajout des caractères uniques au tas
-        if(ih->data[(int) str[i]] == -1){
+        if(ih->data[(int) str[i]] == 1){
             ih->tree[compteur_char_uniques] = str[i];
             compteur_char_uniques++;
         }
@@ -145,11 +145,11 @@ Prend aussi en charge la génération des viz.
 void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
     for(int i = 0; i < nb_car_uniques-1; i++){
         //1ere extraction
-        unsigned char elt1 = removeMax(ih);
+        unsigned char elt1 = removeMin(ih);
         int occ_elt1 = ih->data[elt1];
 
         //2eme extraction
-        unsigned char elt2 = removeMax(ih);
+        unsigned char elt2 = removeMin(ih);
         int occ_elt2 = ih->data[elt2];
 
         int n = MAXCARS+i;
