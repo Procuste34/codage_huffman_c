@@ -1,6 +1,8 @@
 #include <stdio.h>
 
-#include "pb.h"
+#include "codage_utils2.h"
+
+int compter_retour_chariots(char *str);
 
 int main(int argc, char *argv[]){
     int compressage = 0;
@@ -109,11 +111,36 @@ int main(int argc, char *argv[]){
         i = i+1;
         c = str[i];
 
+        //on va alors lire caracteres
+        //pour cela, on va d'abord compter le nombre de '\n' présents dans str
+        //en effet, si le texte original avait un '\n', alors 'caracteres' est sur 2 lignes (à cause du '\n')
+        //sinon, il est sur 1 ligne
+        //il faut donc savoir
+
+        //de base (sans '\n' dans le texte original) le fichier à décompresser compte 2 fois le car. '\n'
+        //car contient  3 lignes : 'parcours_prefixe, 'caracteres', et le code
+
         while(c != '\n'){
             strncat(entete->caracteres, &c, 1);
 
             i++;
             c = str[i];   
+        }
+
+        int nb_retour_chariots = compter_retour_chariots(str);
+
+        //si il y a 3 fois le car '\n' dans le fichier à décompresser on continue jusqu'au prochain '\n'
+        if(nb_retour_chariots == 3){
+            strncat(entete->caracteres, &c, 1);
+            i++;
+            c = str[i];
+
+            while(c != '\n'){
+                strncat(entete->caracteres, &c, 1);
+
+                i++;
+                c = str[i];   
+            }
         }
 
         //on a l'entete, on peut donc en déduire huffmanTree
@@ -153,4 +180,15 @@ int main(int argc, char *argv[]){
     }
 
     return 0;
+}
+
+int compter_retour_chariots(char *str){
+    int compteur = 0;
+
+    for(int i = 0; i<strlen(str); i++){
+        if(str[i] == '\n'){
+            compteur++;
+        }
+    }
+    return compteur;
 }

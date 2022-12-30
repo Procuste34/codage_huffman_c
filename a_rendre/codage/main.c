@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "pb.h"
+#include "codage_utils.h"
 
 int main(void){
     char str[MAX_STRING_LENGTH];

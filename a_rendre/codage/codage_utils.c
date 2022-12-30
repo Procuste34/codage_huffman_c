@@ -1,4 +1,4 @@
-#include "pb.h"
+#include "codage_utils.h"
 
 void reverse_string(char* str){
     //on parcourt la string de gauche à droite et de droite à gauche en même temps, jusqu'à arriver au milieu
