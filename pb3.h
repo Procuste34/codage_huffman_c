@@ -64,7 +64,7 @@ typedef struct{
 T_entete * init_entete();
 
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete);
-T_entete * parcours_rec(int *tree, int root, T_entete *entete);
+void parcours_rec(int *tree, int root, T_entete *entete);
 
 void entete_to_huffmanTree(); //a completer
 void parcours2(int *tree, char *parcours_prefixe, char *caracteres);

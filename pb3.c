@@ -204,10 +204,10 @@ T_entete * init_entete(){
 }
 
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete){
-    entete = parcours_rec(huffmanTree, 128+nb_car_uniques-2, entete);
+    parcours_rec(huffmanTree, 128+nb_car_uniques-2, entete);
 }
 
-T_entete * parcours_rec(int *tree, int root, T_entete *entete){
+void parcours_rec(int *tree, int root, T_entete *entete){
     //traitement : si c'est une feuille on ajoute 1, et 0 sinon
     if(root >= 128){
         char c0 = '0';
@@ -249,7 +249,7 @@ T_entete * parcours_rec(int *tree, int root, T_entete *entete){
         parcours_rec(tree, fils_droit, entete);
     }
 
-    return entete;
+    //return entete;
 }
 
 void parcours2(int *tree, char *parcours_prefixe, char *caracteres){
