@@ -174,9 +174,9 @@ unsigned char removeMaxV3(T_indirectHeap *p);
 
 int main(void){
 
-	//T_heap * maximier = NULL; 
+	T_heap *maximier = NULL; 
 	
-	//int ex4[] = {-5, -3, -1, -1, -1}; 
+	int ex4[] = {5, 3, 9, 1, 88}; 
 	
 	/*
 	// tri pas tas V1 
@@ -187,7 +187,7 @@ int main(void){
 	showHeap(maximier);
 	*/
 	
-	/*
+	
 	// tri par tas V2
 	//free(maximier);
 	maximier = initHeap(ex4, 5);
@@ -199,8 +199,9 @@ int main(void){
 
 	T_elt e = removeMax(maximier);
 	showHeap(maximier);
-	*/
+	
 
+	/*
 	printf("******************************************\n");
 	
 	T_indirectHeap * ih = newHeapV3(5*MAXCARS); //todo, arbitraire
@@ -247,6 +248,9 @@ int main(void){
 	//printf("retire : %s\n", toString(elt2));
 
 	//insertion
+	*/
+
+	return 0.;
 
 	
 }
