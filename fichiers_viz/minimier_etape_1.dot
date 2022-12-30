@@ -1,36 +1,24 @@
 digraph POT_test {
 node [fontname="Arial", shape="circle", width=0.5];
-108 [label = "l"]
-108:sw -> 112
-108:se -> 100
-112 [label = "p"]
-112:sw -> 99
-112:se -> 114
-99 [label = "c"]
-99:sw -> 128
-99:se -> 109
-128 [label = "128"]
-128:sw -> 111
-128:se -> 104
 111 [label = "o"]
-104 [label = "h"]
-109 [label = "m"]
-114 [label = "r"]
-114:sw -> 101
-114:se -> 32
+111:sw -> 39
+111:se -> 108
+39 [label = "'"]
+39:sw -> 101
+39:se -> 109
 101 [label = "e"]
-32 [label = " "]
-100 [label = "d"]
-100:sw -> 117
-100:se -> 102
-117 [label = "u"]
-117:sw -> 105
-117:se -> 115
-105 [label = "i"]
+101:sw -> 115
+101:se -> 32
 115 [label = "s"]
-102 [label = "f"]
-102:sw -> 97
-102:se -> 110
-97 [label = "a"]
-110 [label = "n"]
+32 [label = " "]
+109 [label = "m"]
+109:sw -> 116
+109:se -> 128
+116 [label = "t"]
+128 [label = "128"]
+108 [label = "l"]
+108:sw -> 105
+108:se -> 99
+105 [label = "i"]
+99 [label = "c"]
 }
