@@ -33,92 +33,20 @@ int main(int argc, char *argv[]){
 
         fclose(fp);
 
-        T_indirectHeap * ih = newHeap();
-    
-        //initialisation de tree (le tas) et de data (occurences)
-        for (int i = 0; i < MAXCARS; i++) ih->tree[i] = 0;
-        for (int i = 0; i < 2*MAXCARS-1; i++) ih->data[i] = 0;
-
-        //comptage des occurences
-        int compteur_char_uniques = 0;
-        for(int i = 0; i < strlen(str); i++){
-            ih->data[(int) str[i]]--; //maximier truqué en minimier...
-
-            //ajout des caractères uniques au tas
-            if(ih->data[(int) str[i]] == -1){
-                ih->tree[compteur_char_uniques] = str[i];
-                compteur_char_uniques++;
-            }
-        }
-        
-        int nb_car_uniques = compteur_char_uniques;
-        ih->nbElt = nb_car_uniques;
-
-        //construction du minimier à partir du tas
-        //c'est un minimier indirect : les noeuds sont bien les caractères mais ils sont triés selon leur occurences
-        buildHeap(ih);
+        int z = 0;
+        int *nb_car_uniques = &z;
+        T_indirectHeap *ih = creer_tas(str, nb_car_uniques);
 
         //création de l'arbre de codage
         int huffmanTree [2*MAXCARS-1];
-        for(int i = 0; i < 2*MAXCARS-1; i++) huffmanTree[i] = -256;
-
-        for(int i = 0; i < nb_car_uniques-1; i++){
-            //1ere extraction
-            unsigned char elt1 = removeMax(ih);
-            int occ_elt1 = ih->data[elt1];
-
-            //2eme extraction
-            unsigned char elt2 = removeMax(ih);
-            int occ_elt2 = ih->data[elt2];
-
-            int n = 128+i;
-            //mettre à jour data[n] à occ_elt1+occ_elt2
-            ih->data[n] = occ_elt1+occ_elt2;
-
-            //inserer n dans le tas
-            ih->tree[ih->nbElt] = n;
-            ih->nbElt++;
-
-            //on reconstruit le tas pour avoir un maximier
-            buildHeap(ih);
-
-            //on met alors à jour l'arbre de codage
-            huffmanTree[elt1] = -n;
-            huffmanTree[elt2] = n;
-        }
+        construit_arbre_codage(huffmanTree, ih, *nb_car_uniques);
 
         //l'arbre de codage est alors construit
 
         char codes[MAXCARS][MAXCARS]; //stocke le code de chaque car.
         //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
 
-        char c0 = '0';
-        char c1 = '1';
-        
-        //calcul du code de chacun des caractères ayant une occ > 0
-        //pour chaque car., on remonte l'arbre tant qu'on rencontre un noeud (différent de -256)
-        //il faudra enfin renverse la string obtenue pour avoir le code du car.
-        for(int i = 0; i <= 127; i++){
-            if(huffmanTree[i] != -256){
-                char code_car[MAXCARS] = ""; //MAXCARS = longueur max d'un code
-
-                int index = i;
-                while(huffmanTree[index] != -256){
-
-                    if(huffmanTree[index] < 0){
-                        strncat(code_car, &c0, 1); //strncat set à ajoute un car. à la string code_car
-                    }else {
-                        strncat(code_car, &c1, 1);
-                    }
-
-                    index = abs(huffmanTree[index]);    
-                }
-
-                reverse_string(code_car);
-
-                strcpy(codes[i], code_car);
-            }
-        }
+        calculer_codes(huffmanTree, ih, codes);
 
         //ecrire l'entete
         T_entete *entete;

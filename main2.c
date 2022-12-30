@@ -21,7 +21,6 @@ int main(void){
 
     //création de l'arbre de codage
     int huffmanTree [2*MAXCARS-1];
-
     construit_arbre_codage(huffmanTree, ih, *nb_car_uniques);
 
     //l'arbre de codage est alors construit

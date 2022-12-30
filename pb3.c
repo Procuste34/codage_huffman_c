@@ -163,7 +163,7 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
     }
 }
 
-void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *longueurs, char codes[][MAXCARS]){
+void calculer_codes(int *huffmanTree, T_indirectHeap *ih, char codes[][MAXCARS]){
     char c0 = '0';
     char c1 = '1';
     
@@ -188,8 +188,6 @@ void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *
 
             reverse_string(code_car);
 
-            occurences[i] = ih->data[i];
-            longueurs[i] = strlen(code_car);
             strcpy(codes[i], code_car);
         }
     }
