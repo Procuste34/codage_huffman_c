@@ -49,13 +49,9 @@ int main(int argc, char *argv[]){
         calculer_codes(huffmanTree, ih, codes);
 
         //ecrire l'entete
-        T_entete *entete;
+        T_entete *entete = init_entete();
 
-        CHECK_IF(entete = malloc(sizeof(T_entete)), NULL, "erreur malloc");
-        CHECK_IF(entete->parcours_prefixe = malloc(100 * sizeof(char)), NULL, "erreur malloc");
-        CHECK_IF(entete->caracteres = malloc(100 * sizeof(char)), NULL, "erreur malloc");
-
-        entete = parcours_rec(huffmanTree, 128+nb_car_uniques-2, entete);
+        huffmanTree_to_entete(huffmanTree, nb_car_uniques, entete);
 
         FILE *fp_target = fopen(argv[2], "w");
 

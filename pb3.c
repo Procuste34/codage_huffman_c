@@ -193,6 +193,20 @@ void calculer_codes(int *huffmanTree, T_indirectHeap *ih, char codes[][MAXCARS])
     }
 }
 
+T_entete * init_entete(){
+    T_entete *entete;
+
+    CHECK_IF(entete = malloc(sizeof(T_entete)), NULL, "erreur malloc");
+    CHECK_IF(entete->parcours_prefixe = malloc(100 * sizeof(char)), NULL, "erreur malloc");
+    CHECK_IF(entete->caracteres = malloc(100 * sizeof(char)), NULL, "erreur malloc");
+
+    return entete;
+}
+
+void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete){
+    entete = parcours_rec(huffmanTree, 128+nb_car_uniques-2, entete);
+}
+
 T_entete * parcours_rec(int *tree, int root, T_entete *entete){
     //traitement : si c'est une feuille on ajoute 1, et 0 sinon
     if(root >= 128){
