@@ -104,6 +104,9 @@ unsigned char removeMax(T_indirectHeap *p) {
 	return aux;
 }
 
+/*
+Génère le fichier dot pour visualiser le minimier représenté par tree.
+*/
 void genere_minimier_viz(unsigned char *tree, int nbElt, char *nom_fichier){
     //ouverture du fichier en w pour écraser tout le contenu
     FILE *fp = fopen(nom_fichier, "w");
@@ -162,6 +165,9 @@ void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char *nom
 	genere_minimier_viz_rec(tree, nbElt, iRCHILD(root), nom_fichier);
 }
 
+/*
+Génère le fichier dot pour visualiser l'arbre de codage représenté par tree.
+*/
 void genere_arbre_codage_viz(int *tree, int root, char *nom_fichier){
     FILE *fp = fopen(nom_fichier, "w");
 
@@ -237,6 +243,9 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char *nom_fichier){
     }
 }
 
+/*
+Génère les fichiers dot pour visualiser le minimier représenté par le tas indirect p et l'arbre de codage représenté par tree.
+*/
 void genere_fichier_viz(T_indirectHeap *p, int *tree, int top_noeud_tree, int etape){
     //cette fonction combine les fonctions de génération de viz. du minimier et de l'arbre de codage
     //en plus de générer les fichiers dot, elle génère les fichiers png associés
@@ -268,6 +277,10 @@ void genere_fichier_viz(T_indirectHeap *p, int *tree, int top_noeud_tree, int et
     system(cmd2);
 }
 
+/*
+Créer un minimier indirect et le remplit en comptant les occurences de chaque caractères de str.
+En réalité, on manipule un maximier indirect, mais les occurences sont comptées négativement.
+*/
 T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     //création du tas indirect
     T_indirectHeap * ih = newHeap();
@@ -298,6 +311,10 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     return ih;
 }
 
+/*
+Effectue les n-1 étapes pour la construction de l'arbre de codage (huffmanTree) à partir du minimier indirect
+Prend aussi en charge la génération des viz.
+*/
 void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
     //première visualisation (etape 0)
     genere_fichier_viz(ih, huffmanTree, 0, 0);
@@ -331,6 +348,10 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
     }
 }
 
+/*
+Calcule le code de chacun des caractères ayant une occurence > 0
+Note aussi leur occurence et la longueur de chacun de ces codes dans les tableaux passés en argument.
+*/
 void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *longueurs, char codes[][MAXCARS]){
     char c0 = '0';
     char c1 = '1';
@@ -356,7 +377,7 @@ void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *
 
             reverse_string(code_car);
 
-            occurences[i] = ih->data[i];
+            occurences[i] = -ih->data[i]; // on avait compté négativement les occurences (pour garder un maximier)
             longueurs[i] = strlen(code_car);
             strcpy(codes[i], code_car);
         }

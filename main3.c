@@ -2,6 +2,10 @@
 
 #include "pb3.h"
 
+//todo refaire une couche de comms
+//todo commenter ce que fait chaque fonction
+//todo protection ouverture fichier
+
 int main(int argc, char *argv[]){
     int compressage = 0;
 

@@ -3,8 +3,6 @@
 
 #include "pb2.h"
 
-//todo refaire une couche de comms
-
 int main(void){
     char str[MAX_STRING_LENGTH];
     char *ma_string;
@@ -25,7 +23,7 @@ int main(void){
     construit_arbre_codage(huffmanTree, ih, *nb_car_uniques);
 
     //l'arbre de codage est alors construit
-    //on va alors le parcourir pour en déduire le code de chacun des caractères de la chaine
+    //on va alors le parcourir pour en déduire le code de chacun des caractères de la chaine (fonction calculer_codes)
 
     int occurences[MAXCARS]; //stocke les occurences de chaque car.
     int longueurs[MAXCARS]; //stocke la longueur des code de chaque car.
@@ -40,7 +38,7 @@ int main(void){
 
     for(int i = 0; i <= 127; i++){
         if(huffmanTree[i] != -256){
-            printf("'%c' :   %d |    %d | %s\n", i, -occurences[i], longueurs[i], codes[i]);
+            printf("'%c' :   %d |    %d | %s\n", i, occurences[i], longueurs[i], codes[i]);
         }
     }
 
