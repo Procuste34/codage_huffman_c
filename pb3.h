@@ -52,7 +52,7 @@ unsigned char removeMax(T_indirectHeap *p);
 
 T_indirectHeap * creer_tas(char *str, int *nb_car_uniques);
 void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques);
-void calculer_codes(int *huffmanTree, T_indirectHeap *ih, char codes[][MAXCARS]);
+void calculer_codes(int *huffmanTree, char codes[][MAXCARS]);
 
 // **************** fonctions pour gérer les entetes du codage de Huffman (pb3) ********** //
 
@@ -66,6 +66,6 @@ T_entete * init_entete();
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete);
 void parcours_rec(int *tree, int root, T_entete *entete);
 
-void entete_to_huffmanTree(); //a completer
+void entete_to_huffmanTree(int *huffmanTree, T_entete *entete); //a completer
 void parcours2(int *tree, char *parcours_prefixe, char *caracteres);
 void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere);

@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
         char codes[MAXCARS][MAXCARS]; //stocke le code de chaque car.
         //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
 
-        calculer_codes(huffmanTree, ih, codes);
+        calculer_codes(huffmanTree, codes);
 
         //ecrire l'entete
         T_entete *entete = init_entete();
@@ -88,11 +88,7 @@ int main(int argc, char *argv[]){
         //on va alors parcourir str pour split cela
         //et recupérer : parcours_prefixe, caracteres et le code séparément
 
-        T_entete *entete;
-
-        CHECK_IF(entete = malloc(sizeof(T_entete)), NULL, "erreur malloc");
-        CHECK_IF(entete->parcours_prefixe = malloc(100 * sizeof(char)), NULL, "erreur malloc"); //todo : arbitraire
-        CHECK_IF(entete->caracteres = malloc(100 * sizeof(char)), NULL, "erreur malloc");
+        T_entete *entete = init_entete();
 
         char c = str[0];
         int i = 0;
@@ -114,42 +110,14 @@ int main(int argc, char *argv[]){
 
         //on a l'entete, on peut donc en déduire huffmanTree
         int huffmanTree[256];
-        for(int i = 0; i < 256; i++){
-            huffmanTree[i] = -256;
-        }
+        for(int i = 0; i < 256; i++) huffmanTree[i] = -256;
 
-        parcours2(huffmanTree, entete->parcours_prefixe, entete->caracteres);
+        entete_to_huffmanTree(huffmanTree, entete);
 
         char codes[MAXCARS][MAXCARS]; //stocke le code de chaque car.
         //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
 
-        char c0 = '0';
-        char c1 = '1';
-
-        //calcul du code de chacun des caractères ayant une occ > 0
-        //pour chaque car., on remonte l'arbre tant qu'on rencontre un noeud (différent de -256)
-        //il faudra enfin renverse la string obtenue pour avoir le code du car.
-        for(int i = 0; i <= 127; i++){
-            if(huffmanTree[i] != -256){
-                char code_car[MAXCARS] = ""; //MAXCARS = longueur max d'un code
-
-                int index = i;
-                while(huffmanTree[index] != -256){
-
-                    if(huffmanTree[index] < 0){
-                        strncat(code_car, &c0, 1); //strncat set à ajoute un car. à la string code_car
-                    }else {
-                        strncat(code_car, &c1, 1);
-                    }
-
-                    index = abs(huffmanTree[index]);    
-                }
-
-                reverse_string(code_car);
-
-                strcpy(codes[i], code_car);
-            }
-        }
+        calculer_codes(huffmanTree, codes);
 
         //on a le code de chaque car., on peut donc decoder le texte
         //pour cela, on parcourt le texte codé que l'on coupe en bout dès qu'on reconnait l'un des codes

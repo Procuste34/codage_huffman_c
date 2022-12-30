@@ -163,7 +163,7 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
     }
 }
 
-void calculer_codes(int *huffmanTree, T_indirectHeap *ih, char codes[][MAXCARS]){
+void calculer_codes(int *huffmanTree, char codes[][MAXCARS]){
     char c0 = '0';
     char c1 = '1';
     
@@ -250,6 +250,10 @@ void parcours_rec(int *tree, int root, T_entete *entete){
     }
 
     //return entete;
+}
+
+void entete_to_huffmanTree(int *huffmanTree, T_entete *entete){
+    parcours2(huffmanTree, entete->parcours_prefixe, entete->caracteres);
 }
 
 void parcours2(int *tree, char *parcours_prefixe, char *caracteres){
