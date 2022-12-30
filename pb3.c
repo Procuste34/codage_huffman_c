@@ -135,8 +135,6 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
 }
 
 void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
-    for(int i = 0; i < 2*MAXCARS-1; i++) huffmanTree[i] = -256;
-
     for(int i = 0; i < nb_car_uniques-1; i++){
         //1ere extraction
         unsigned char elt1 = removeMax(ih);
@@ -253,10 +251,6 @@ void parcours_rec(int *tree, int root, T_entete *entete){
 }
 
 void entete_to_huffmanTree(int *huffmanTree, T_entete *entete){
-    parcours2(huffmanTree, entete->parcours_prefixe, entete->caracteres);
-}
-
-void parcours2(int *tree, char *parcours_prefixe, char *caracteres){
     int j_base = 128;
     int i_base = 0;
     int compteur_car_base = 0;
@@ -264,9 +258,8 @@ void parcours2(int *tree, char *parcours_prefixe, char *caracteres){
     int *j = &j_base;
     int *i = &i_base;
     int *compteur_car = &compteur_car_base;
-    parcours2_rec(tree, parcours_prefixe, caracteres, 0, j, i, compteur_car, -1);
+    parcours2_rec(huffmanTree, entete->parcours_prefixe, entete->caracteres, 0, j, i, compteur_car, -1);
 }
-
 
 void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere){
     if(parcours_prefixe[*i] == '0'){ //noeud interne

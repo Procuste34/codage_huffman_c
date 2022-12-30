@@ -67,5 +67,4 @@ void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entet
 void parcours_rec(int *tree, int root, T_entete *entete);
 
 void entete_to_huffmanTree(int *huffmanTree, T_entete *entete); //a completer
-void parcours2(int *tree, char *parcours_prefixe, char *caracteres);
 void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere);

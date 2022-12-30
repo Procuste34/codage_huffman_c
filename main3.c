@@ -38,7 +38,9 @@ int main(int argc, char *argv[]){
         T_indirectHeap *ih = creer_tas(str, nb_car_uniques);
 
         //création de l'arbre de codage
-        int huffmanTree [2*MAXCARS-1];
+        int huffmanTree[2*MAXCARS];
+        for(int i = 0; i < 2*MAXCARS; i++) huffmanTree[i] = -256;
+
         construit_arbre_codage(huffmanTree, ih, *nb_car_uniques);
 
         //l'arbre de codage est alors construit
@@ -109,8 +111,8 @@ int main(int argc, char *argv[]){
         }
 
         //on a l'entete, on peut donc en déduire huffmanTree
-        int huffmanTree[256];
-        for(int i = 0; i < 256; i++) huffmanTree[i] = -256;
+        int huffmanTree[2*MAXCARS];
+        for(int i = 0; i < 2*MAXCARS; i++) huffmanTree[i] = -256;
 
         entete_to_huffmanTree(huffmanTree, entete);
 
