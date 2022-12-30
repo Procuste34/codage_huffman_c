@@ -104,6 +104,10 @@ unsigned char removeMax(T_indirectHeap *p) {
 	return aux;
 }
 
+/*
+Créer un minimier indirect et le remplit en comptant les occurences de chaque caractères de str.
+En réalité, on manipule un maximier indirect, mais les occurences sont comptées négativement.
+*/
 T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     //création du tas indirect
     T_indirectHeap *ih = newHeap();
@@ -134,6 +138,10 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     return ih;
 }
 
+/*
+Effectue les n-1 étapes pour la construction de l'arbre de codage (huffmanTree) à partir du minimier indirect
+Prend aussi en charge la génération des viz.
+*/
 void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
     for(int i = 0; i < nb_car_uniques-1; i++){
         //1ere extraction
@@ -161,6 +169,10 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
     }
 }
 
+/*
+Calcule le code de chacun des caractères ayant une occurence > 0
+Note aussi leur occurence et la longueur de chacun de ces codes dans les tableaux passés en argument.
+*/
 void calculer_codes(int *huffmanTree, char codes[][MAXCARS]){
     char c0 = '0';
     char c1 = '1';
@@ -191,6 +203,9 @@ void calculer_codes(int *huffmanTree, char codes[][MAXCARS]){
     }
 }
 
+/*
+Initalise et réserve la mémoire pour une entete vide.
+*/
 T_entete * init_entete(){
     T_entete *entete;
 
@@ -203,11 +218,18 @@ T_entete * init_entete(){
     return entete;
 }
 
+/*
+Etant donné un arbre de codage, rempli l'entete passée en argument
+*/
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete){
     parcours_rec(huffmanTree, MAXCARS+nb_car_uniques-2, entete);
 }
 
 void parcours_rec(int *tree, int root, T_entete *entete){
+    //tree représente l'arbre de codage
+    //root représente le noeud/feuille sur lequel on a lancé l'appel rec.
+    //entete est l'entete dans laquelle on va écrire
+
     //traitement : si c'est une feuille on ajoute 1, et 0 sinon
     if(root >= MAXCARS){
         char c0 = '0';
@@ -250,8 +272,11 @@ void parcours_rec(int *tree, int root, T_entete *entete){
     }
 }
 
+/*
+Etant donné une entete, rempli l'arbre de codage huffmanTree passé en argument
+*/
 void entete_to_huffmanTree(int *huffmanTree, T_entete *entete){
-    int j_base = MAXCARS;
+    int j_base = MAXCARS; //la racine vaudra 128
     int i_base = 0;
     int compteur_car_base = 0;
 
@@ -262,20 +287,31 @@ void entete_to_huffmanTree(int *huffmanTree, T_entete *entete){
 }
 
 void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appel_fg, int *j, int *i, int *compteur_car, int pere){
+    //tree représente l'arbre de codage que l'on rempli
+    //parcours_prefixe et caracteres représentent l'entete que l'on utilise pour remplir l'arbre de codage
+    //appel_fg est un booléen qui permet de savoir si l'appel rec. qui a été lancé est un appel sur un fils g. ou un fils d.
+    //j est la valeur des noeuds internes que l'on renconte (valeur arbitraire, qui commence à 128, puis s'incrémente de 1 en 1 à chaque noeud) la racine vaudra donc 128
+    //i est l'index de lecture de parcours_prefixe
+    //compteur_car compte le nombre de caractères (ie feuille) alors vu jusqu'à présent
+    //pere est le père, depuis lequel on a lancé l'appel rec.
+
+    //j, i et compteur_car sont des pointeurs
+
     if(parcours_prefixe[*i] == '0'){ //noeud interne
         if(pere != -1){
             if(appel_fg){
-                tree[*j] = -pere;
+                tree[*j] = -pere; //convention - si fg, + si fd...
             }else{
                 tree[*j] = +pere;
             }
         }
 
         (*i)++;
-        //appel rec. a gauche
+        
         int pere = *j;
-        (*j)++;
+        (*j)++; //on incrémente j pour le prochain noeud interne
 
+        //appel rec. a gauche
         parcours2_rec(tree, parcours_prefixe, caracteres, 1, j, i, compteur_car, pere);
 
         //appel rec. à droite
@@ -285,7 +321,7 @@ void parcours2_rec(int *tree, char *parcours_prefixe, char *caracteres, int appe
         (*i)++;
         
         if(appel_fg){
-            tree[(int)caracteres[*compteur_car]] = -pere;
+            tree[(int)caracteres[*compteur_car]] = -pere; //convention - si fg, + si fd...
         }else{
             tree[(int)caracteres[*compteur_car]] = +pere;
         }

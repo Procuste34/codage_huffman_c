@@ -53,10 +53,12 @@ void calculer_codes(int *huffmanTree, char codes[][MAXCARS]);
 
 // **************** fonctions pour gérer les entetes du codage de Huffman (pb3) ********** //
 
+//type qui permet de stocker le contenu d'une entete
 typedef struct{
     char *parcours_prefixe;
     char *caracteres;
 } T_entete;
+
 
 T_entete * init_entete();
 

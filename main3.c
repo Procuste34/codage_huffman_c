@@ -2,10 +2,6 @@
 
 #include "pb3.h"
 
-//todo refaire une couche de comms
-//todo commenter ce que fait chaque fonction
-//todo protection ouverture fichier
-
 int main(int argc, char *argv[]){
     int compressage = 0;
 
@@ -21,6 +17,10 @@ int main(int argc, char *argv[]){
         //todo : faire des checks d'erreur (comme openai) si jamais fichier pas ok...
 
         FILE *fp = fopen(argv[1], "r");
+        if(fp == NULL){
+            perror("Erreur lors de l'ouverture du fichier");
+            return 0;
+        }
 
         fseek(fp, 0, SEEK_END); //on se déplace à la fin du fichier pour en connaitre sa taille
         long size = ftell(fp); //on recupere la taille du fichier
@@ -74,6 +74,10 @@ int main(int argc, char *argv[]){
 
     }else { // décompressage
         FILE *fp = fopen(argv[1], "r");
+        if(fp == NULL){
+            perror("Erreur lors de l'ouverture du fichier");
+            return 0;
+        }
 
         fseek(fp, 0, SEEK_END); //on se déplace à la fin du fichier pour en connaitre sa taille
         long size = ftell(fp); //on recupere la taille du fichier
@@ -91,6 +95,8 @@ int main(int argc, char *argv[]){
         //on a lu et stocké tout le contenu du fichier (entete+code) dans str
         //on va alors parcourir str pour split cela
         //et recupérer : parcours_prefixe, caracteres et le code séparément
+        
+        //on parcourt str avec la variable i
 
         T_entete *entete = init_entete();
 
@@ -130,11 +136,11 @@ int main(int argc, char *argv[]){
         char code_lu[MAXCARS] = "";
         //MAXCARS = longueur max d'un code (on peut faire mieux avec nb_car_uniques mais taille connue qu'au runtime)
 
-        for(int j = i+1; j<size; j++){ //on reprend le parcours de str
+        for(int j = i+1; j<size; j++){ //on reprend le parcours de str (on avait jusqu'ici lu les caractères de 0 jusqu'à i inclu)
             strncat(code_lu, &str[j], 1);
 
             //on regarde si code_lu est l'un des codes
-            for(int k = 0; k <= 127; k++){
+            for(int k = 0; k <= MAXCARS-1; k++){
                 if(huffmanTree[k] != 256){
                     if(strcmp(codes[k], code_lu) == 0){
                         //c'est le cas : on reset code_lu, on print la lettre associée
