@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
         //ecrire l'entete
         T_entete *entete = init_entete();
 
-        huffmanTree_to_entete(huffmanTree, nb_car_uniques, entete);
+        huffmanTree_to_entete(huffmanTree, *nb_car_uniques, entete);
 
         FILE *fp_target = fopen(argv[2], "w");
 
