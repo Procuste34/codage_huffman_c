@@ -210,10 +210,12 @@ T_entete * init_entete(){
     T_entete *entete;
 
     CHECK_IF(entete = malloc(sizeof(T_entete)), NULL, "erreur malloc");
+
     CHECK_IF(entete->parcours_prefixe = malloc((2*MAXCARS-1) * sizeof(char)), NULL, "erreur malloc"); 
     // MAXCARS + MAXCARS - 1 = taille max de la partie "parcours prefixe" de l'entete (il s'agit du nb. de noeud+feuilles dans l'arbre)
 
-    CHECK_IF(entete->caracteres = malloc(MAXCARS * sizeof(char)), NULL, "erreur malloc"); //MAXCARS = taille max de la partie "caracteres" de l'entete
+    CHECK_IF(entete->caracteres = malloc(MAXCARS * sizeof(char)), NULL, "erreur malloc");
+    //MAXCARS = taille max de la partie "caracteres" de l'entete
 
     return entete;
 }
@@ -223,6 +225,7 @@ Etant donné un arbre de codage, rempli l'entete passée en argument
 */
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete){
     parcours_rec(huffmanTree, MAXCARS+nb_car_uniques-2, entete);
+    //la racine de huffmanTree vaut MAXCARS+nb_car_uniques-2
 }
 
 void parcours_rec(int *tree, int root, T_entete *entete){
@@ -230,7 +233,7 @@ void parcours_rec(int *tree, int root, T_entete *entete){
     //root représente le noeud/feuille sur lequel on a lancé l'appel rec.
     //entete est l'entete dans laquelle on va écrire
 
-    //traitement : si c'est une feuille on ajoute 1, et 0 sinon
+    //traitement : si c'est une feuille on ajoute 1 et le caractere, et 0 sinon
     if(root >= MAXCARS){
         char c0 = '0';
         strncat(entete->parcours_prefixe, &c0, 1);
@@ -243,7 +246,8 @@ void parcours_rec(int *tree, int root, T_entete *entete){
         strncat(entete->caracteres, car, 1);
     }
 
-    //on cherche fg, on lance appel rec dessus
+    //on commence par le fils gauche car parcours préfixe
+    //on cherche le fils g, on lance appel rec dessus (si il existe)
     int fils_gauche = -256;
 
     for(int i = 0; i<256; i++){
@@ -257,7 +261,7 @@ void parcours_rec(int *tree, int root, T_entete *entete){
         parcours_rec(tree, fils_gauche, entete);
     }
 
-    //on cherche fd, on lance appel rec dessus
+    //on cherche le fils d, on lance appel rec dessus (si il existe)
     int fils_droit = -256;
 
     for(int i = 0; i<256; i++){
