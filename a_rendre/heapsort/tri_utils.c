@@ -81,9 +81,11 @@ void heap_sort(T_data d, int n){
 
     //construction du maximier/minimier
     //comment on s'y prend ?
-    //on part du bas de l'arbre et on le remonte, en appelant tassifier à chaque fois
+    //on part du bas de l'arbre et on le remonte, 
+    //en appelant tassifier à chaque fois
 
-    //on part du constat suivant : les feuilles du tas se situent des indices floor(n/2)+1 à n
+    //on part du constat suivant : les feuilles du tas se situent des 
+    //indices floor(n/2)+1 à n
     //or, une feuille en elle-même est déjà un maximier/minimier
     //donc on peut partir des noeuds dont les fils sont des feuilles
     //et remonte jusqu'à l'indice 0.
@@ -94,10 +96,12 @@ void heap_sort(T_data d, int n){
 
     //heap sort
     for (int i = n - 1; i >= 0; i--){
-        //a chaque passage, on sait que l'élément le plus grand/petit est la racine du tas, ie d'indice 0
+        //a chaque passage, on sait que l'élément le plus grand/petit est 
+        //la racine du tas, ie d'indice 0
         //(car on a appeler tassifier avant)
 
-        //ainsi, on echange cet element extreme avec le dernier element de la portion non triee du tas
+        //ainsi, on echange cet element extreme avec le dernier element de 
+        //la portion non triee du tas
         //(portion qui commence à i)
         //la encore, plus clair avec un papier et un crayon
 

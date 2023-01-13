@@ -224,6 +224,8 @@ T_entete * init_entete(){
 Etant donné un arbre de codage, rempli l'entete passée en argument
 */
 void huffmanTree_to_entete(int *huffmanTree, int nb_car_uniques, T_entete *entete){
+    //on lance le parcours prefixe sur huffmanTree
+
     parcours_rec(huffmanTree, MAXCARS+nb_car_uniques-2, entete);
     //la racine de huffmanTree vaut MAXCARS+nb_car_uniques-2
 }
@@ -280,7 +282,7 @@ void parcours_rec(int *tree, int root, T_entete *entete){
 Etant donné une entete, rempli l'arbre de codage huffmanTree passé en argument
 */
 void entete_to_huffmanTree(int *huffmanTree, T_entete *entete){
-    int j_base = MAXCARS; //la racine vaudra 128
+    int j_base = MAXCARS; //la racine vaudra 128 (ARBITRAIRE)
     int i_base = 0;
     int compteur_car_base = 0;
 

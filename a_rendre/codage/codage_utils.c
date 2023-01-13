@@ -126,6 +126,11 @@ void genere_minimier_viz(unsigned char *tree, int nbElt, char *nom_fichier){
 }
 
 void genere_minimier_viz_rec(unsigned char *tree, int nbElt, int root, char *nom_fichier){
+    //tree : le minimer a viz
+    //nbElt : nb d'éléments dans le minimier
+    //root : noeud sur lequel est appele (indice de l'array du minimier)
+    //nom_fichier : nom du fichier sur lequel on écrit
+
     assert(tree!=NULL);
 	if (!isINTREE(root, nbElt)) return;
 
@@ -184,6 +189,10 @@ void genere_arbre_codage_viz(int *tree, int root, char *nom_fichier){
 }
 
 void genere_arbre_codage_viz_rec(int *tree, int root, char *nom_fichier){
+    //tree : arbre de codage qu'on veut viz
+    //root : noeud de l'arbre sur lequel est appele l'appel
+    //nom_fichier : nom du fichier à écrire
+
     //on cherche les 2 fils de root puis on lance l'appel rec.
 
     //si le car. est affichable en tant que %c, on l'affiche ainsi, sinon on affiche son code ASCII
@@ -239,7 +248,8 @@ void genere_arbre_codage_viz_rec(int *tree, int root, char *nom_fichier){
             genere_arbre_codage_viz_rec(tree, fils_droit, nom_fichier);
         }
 
-        fclose(fp);
+        fclose(fp); //bug du programme ici (les voisins sont notés apres) donc ca marche ok mais attention!
+        //il faut close avant les appels rec.!!!!!!!!
     }
 }
 
@@ -305,7 +315,8 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
     ih->nbElt = *nb_car_uniques;
 
     //construction du minimier à partir du tas
-    //c'est un minimier indirect : les noeuds sont bien les caractères mais ils sont triés selon leur occurences
+    //c'est un minimier indirect : les noeuds sont bien les 
+    //caractères mais ils sont triés selon leur occurences
 	buildHeap(ih);
 
     return ih;
@@ -315,7 +326,8 @@ T_indirectHeap * creer_tas(char *str, int *nb_car_uniques){
 Effectue les n-1 étapes pour la construction de l'arbre de codage (huffmanTree) à partir du minimier indirect
 Prend aussi en charge la génération des viz.
 */
-void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uniques){
+void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, 
+int nb_car_uniques){
     //première visualisation (etape 0)
     genere_fichier_viz(ih, huffmanTree, 0, 0);
 
@@ -336,7 +348,7 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
         ih->tree[ih->nbElt] = n;
         ih->nbElt++;
 
-        //on reconstruit le tas pour avoir un maximier
+        //on reconstruit le tas pour avoir un minimier
         buildHeap(ih);
 
         //on met alors à jour l'arbre de codage
@@ -352,12 +364,14 @@ void construit_arbre_codage(int *huffmanTree, T_indirectHeap *ih, int nb_car_uni
 Calcule le code de chacun des caractères ayant une occurence > 0
 Note aussi leur occurence et la longueur de chacun de ces codes dans les tableaux passés en argument.
 */
-void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *longueurs, char codes[][MAXCARS]){
+void calculer_codes(int *huffmanTree, T_indirectHeap *ih, 
+int *occurences, int *longueurs, char codes[][MAXCARS]){
     char c0 = '0';
     char c1 = '1';
     
     //calcul du code de chacun des caractères ayant une occ > 0
-    //pour chaque car., on remonte l'arbre tant qu'on rencontre un noeud (différent de -256)
+    //pour chaque car., on remonte l'arbre tant qu'on 
+    //rencontre un noeud (différent de -256)
     //il faudra enfin renverse la string obtenue pour avoir le code du car.
     for(int i = 0; i <= MAXCARS-1; i++){
         if(huffmanTree[i] != -256){
@@ -367,7 +381,8 @@ void calculer_codes(int *huffmanTree, T_indirectHeap *ih, int *occurences, int *
             while(huffmanTree[index] != -256){
 
                 if(huffmanTree[index] < 0){
-                    strncat(code_car, &c0, 1); //strncat set à ajoute un car. à la string code_car
+                    strncat(code_car, &c0, 1); 
+                    //strncat set à ajoute un car. à la string code_car
                 }else {
                     strncat(code_car, &c1, 1);
                 }
